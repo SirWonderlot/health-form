@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access Life | Benefit Amount</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    background: #f0f2f5;
+    color: #333;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Top bar area — blue-grey background spanning full width */
+  .top-bar {
+    background: #c5ced6;
+    padding-bottom: 50px;
+  }
+
+  /* Header — title inside the grey area */
+  .header {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 30px 20px;
+    text-align: center;
+  }
+  .header h1 {
+    color: #4a6274;
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+  }
+  .header-subtitle {
+    color: #4a6274;
+    font-size: 1.8rem;
+    font-weight: 500;
+  }
+
+  /* Step indicator — white rounded card overlapping the grey area */
+  .step-indicator-wrapper {
+    max-width: 1000px;
+    margin: -30px auto 0;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+  }
+  .step-indicator {
+    background: #fff;
+    padding: 22px 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: #aab4bd;
+  }
+  .step-item .step-label { display: flex; flex-direction: column; line-height: 1.3; }
+  .step-item .step-label .step-name { font-weight: 600; }
+  .step-item .step-label .step-sub { font-size: 0.75rem; font-weight: 400; color: #aab4bd; }
+  .step-item.active { color: #4a6274; }
+  .step-item.active .step-label .step-sub { color: #7a8d9a; }
+  .step-item.completed { color: #8a9baa; }
+  .step-circle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 600;
+    background: #e4e8ec; color: #aab4bd;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .step-item.active .step-circle { background: #8a7261; color: #fff; }
+  .step-item.completed .step-circle { background: #a8b5c0; color: #fff; }
+  .step-item.completed .step-circle::after {
+    content: '\2713';
+    font-size: 0.85rem;
+  }
+  .step-item.completed .step-circle .step-num { display: none; }
+  .step-connector {
+    width: 40px; height: 2px; background: #e0e4e8; flex-shrink: 0;
+  }
+
+  /* Main content */
+  .container {
+    max-width: 820px;
+    margin: 30px auto;
+    padding: 0 16px 60px;
+  }
+
+  /* Sections */
+  .form-section {
+    display: none;
+    background: #fff;
+    border-radius: 10px;
+    padding: 35px 30px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    animation: fadeIn 0.3s ease;
+  }
+  .form-section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Section heading */
+  .section-heading {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #4a6274;
+    border-bottom: 2px solid #4a6274;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+  }
+
+  /* Questions */
+  .question-group {
+    margin-bottom: 24px;
+  }
+  .question-group:last-of-type { margin-bottom: 0; }
+  .question-text {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    font-weight: 400;
+  }
+  .question-text strong {
+    font-weight: 700;
+  }
+  .sub-question {
+    margin-left: 24px;
+    margin-bottom: 18px;
+  }
+  .sub-question > .question-text > strong {
+    font-weight: 600;
+  }
+  .sub-sub-question {
+    margin-left: 48px;
+    margin-bottom: 18px;
+  }
+
+  /* Radio buttons — all aligned to 48px from left edge of card */
+  .radio-group {
+    display: flex;
+    gap: 30px;
+    margin-top: 6px;
+    margin-bottom: 4px;
+    padding-left: 48px;
+  }
+  .sub-question .radio-group {
+    padding-left: 24px;
+  }
+  .sub-sub-question .radio-group {
+    padding-left: 0;
+  }
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+  .radio-group input[type="radio"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px; height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .radio-group input[type="radio"]:checked {
+    border-color: #4a6274;
+  }
+  .radio-group input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #4a6274;
+  }
+
+  /* Select / Input */
+  select, input[type="text"], input[type="month"] {
+    padding: 10px 14px;
+    border: 1.5px solid #d0d5dd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: #333;
+    background: #fff;
+    width: 100%;
+    max-width: 400px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  select:focus, input[type="text"]:focus, input[type="month"]:focus {
+    border-color: #4a6274;
+    box-shadow: 0 0 0 3px rgba(74,98,116,0.1);
+  }
+  select { cursor: pointer; font-weight: 400; }
+  select option { font-weight: 400; }
+
+  /* Height/weight table */
+  .hw-table {
+    width: 100%;
+    max-width: 560px;
+    border-collapse: collapse;
+    margin: 14px 0 18px;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #ddd;
+  }
+  .hw-table th {
+    background: #e8ecf0;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .hw-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #eee;
+  }
+  .hw-table tr:last-child td { border-bottom: none; }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 35px;
+    gap: 12px;
+  }
+  .btn {
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: #4a6274;
+    color: #fff;
+  }
+  .btn-primary:hover { background: #3a5060; }
+  .btn-secondary {
+    background: #e0e4e8;
+    color: #4a6274;
+  }
+  .btn-secondary:hover { background: #d0d5dd; }
+  .btn-submit {
+    background: #5a8a6a;
+    color: #fff;
+  }
+  .btn-submit:hover { background: #4a7a5a; }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Conditional fields */
+  .conditional-field {
+    display: none;
+    margin-top: 14px;
+    margin-left: 0;
+    padding: 18px;
+    background: #f8f9fb;
+    border-radius: 8px;
+    border: 1px solid #e8ecf0;
+  }
+  .conditional-field.show { display: block; }
+  .conditional-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+  }
+  .conditional-field .field-row {
+    margin-bottom: 14px;
+  }
+  .conditional-field .field-row:last-child { margin-bottom: 0; }
+
+  /* Consent checkboxes */
+  .consent-block {
+    margin-top: 20px;
+    padding: 18px;
+    background: #f8f9fb;
+    border-radius: 8px;
+    border: 1px solid #e0e4e8;
+  }
+  .consent-block p {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+  }
+  .consent-block a { color: #4a6274; }
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .checkbox-row input[type="checkbox"] {
+    width: 20px; height: 20px;
+    accent-color: #5a8a6a;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .checkbox-row label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  /* Inline field rows (name, email, phone) */
+  .field-row-inline {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+  .field-col {
+    flex: 1;
+  }
+  .field-col label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+  .field-col input {
+    width: 100%;
+    max-width: 100%;
+  }
+  input[type="date"] {
+    padding: 10px 14px;
+    border: 1.5px solid #d0d5dd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: #333;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  input[type="date"]:focus {
+    border-color: #4a6274;
+    box-shadow: 0 0 0 3px rgba(74,98,116,0.1);
+  }
+  input[type="email"], input[type="tel"] {
+    padding: 10px 14px;
+    border: 1.5px solid #d0d5dd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: #333;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  input[type="email"]:focus, input[type="tel"]:focus {
+    border-color: #4a6274;
+    box-shadow: 0 0 0 3px rgba(74,98,116,0.1);
+  }
+
+  /* Checkbox list (beneficiary) */
+  .checkbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 400px;
+  }
+  .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    background: #f4f5f7;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+  }
+  .checkbox-option:hover { background: #e8ecf0; }
+  .checkbox-option input[type="checkbox"] {
+    width: 18px; height: 18px;
+    accent-color: #4a6274;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* Dropdown for tobacco */
+  .dropdown-select {
+    max-width: 300px;
+  }
+
+  /* Validation message */
+  .validation-msg {
+    color: #c0392b;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    display: none;
+  }
+  .validation-msg.show { display: block; }
+
+  /* Success screen */
+  .success-screen {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .success-screen .checkmark {
+    width: 70px; height: 70px;
+    background: #5a8a6a;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    color: #fff;
+    font-size: 2rem;
+  }
+  .success-screen h2 { color: #4a6274; margin-bottom: 10px; }
+  .success-screen p { color: #666; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .header { padding: 20px 16px 14px; }
+    .header h1 { font-size: 1.2rem; }
+    .form-section { padding: 22px 18px; }
+    .step-indicator { gap: 4px; padding: 14px 10px; }
+    .step-indicator-wrapper { margin-top: -20px; }
+    .step-connector { width: 10px; }
+    .step-item { font-size: 0.7rem; gap: 4px; }
+    .step-item .step-label .step-sub { display: none; }
+    .step-circle { width: 28px; height: 28px; font-size: 0.7rem; }
+    .sub-question { margin-left: 14px; }
+    .sub-sub-question { margin-left: 28px; }
+    .btn { padding: 10px 20px; font-size: 0.9rem; }
+    .hw-table { font-size: 0.8rem; }
+    .hw-table th, .hw-table td { padding: 6px 8px; }
+    .field-row-inline { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top bar with blue-grey background -->
+<div class="top-bar">
+  <div class="header">
+    <h1>Access Life</h1>
+    <h2 class="header-subtitle">Benefit Amount</h2>
+  </div>
+</div>
+
+<!-- Step Indicator — overlapping card -->
+<div class="step-indicator-wrapper">
+  <div class="step-indicator" id="stepIndicator">
+    <div class="step-item active" data-step="1">
+      <div class="step-circle"><span class="step-num">1</span></div>
+      <div class="step-label"><span class="step-name">Step 1</span><span class="step-sub">Level I</span></div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" data-step="2">
+      <div class="step-circle"><span class="step-num">2</span></div>
+      <div class="step-label"><span class="step-name">Step 2</span><span class="step-sub">Level II</span></div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" data-step="3">
+      <div class="step-circle"><span class="step-num">3</span></div>
+      <div class="step-label"><span class="step-name">Step 3</span><span class="step-sub">Level III</span></div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" data-step="4">
+      <div class="step-circle"><span class="step-num">4</span></div>
+      <div class="step-label"><span class="step-name">Step 4</span><span class="step-sub">Level IV</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- SECTION 1 — Questions 1-6 (any Yes → final, all No → section 2) -->
+<!-- ============================================================ -->
+<div class="form-section active" id="section1">
+
+  <!-- Gender -->
+  <div class="question-group">
+    <p class="question-text"><strong>Gender</strong></p>
+    <div class="radio-group">
+      <label><input type="radio" name="gender" value="Male" onchange="updateGenderTables()"> Male</label>
+      <label><input type="radio" name="gender" value="Female" onchange="updateGenderTables()"> Female</label>
+    </div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="question-group">
+    <p class="question-text"><strong>1.</strong> Have you discussed or taken steps with a healthcare professional concerning a request for medical assistance in dying (MAID)?</p>
+    <div class="radio-group">
+      <label><input type="radio" name="s1q1" value="Yes"> Yes</label>
+      <label><input type="radio" name="s1q1" value="No"> No</label>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-group">
+    <p class="question-text"><strong>2. In your lifetime, have you had, or been told you had, and/or been treated for any of the following conditions:</strong></p>
+
+    <div class="sub-question">
+      <p class="question-text"><strong>a.</strong> Acquired immunodeficiency syndrome (AIDS) or tested positive for the human immunodeficiency virus (HIV)?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q2a" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q2a" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>b.</strong> Heart failure or cardiomyopathy?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q2b" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q2b" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>c.</strong> Cystic fibrosis, Alzheimer's disease, dementia, Huntington's chorea, Parkinson's disease, amyotrophic lateral sclerosis (ALS or Lou Gehrig's disease), muscular dystrophy, myotonic dystrophy or any form of ataxia?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q2c" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q2c" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>d.</strong> Chronic respiratory disease (excluding sleep apnea) which requires the daily administration of oxygen or the use of a ventilator?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q2d" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q2d" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>e.</strong> Have you received an organ transplant, or a bone marrow transplant, or were you advised to do so due to your condition?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q2e" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q2e" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>f.</strong> Before age 40, have you had, or been told you had, and/or been treated for any of the following conditions: cardiac chest pain or angina, heart attack, heart valve disease, heart disease, arteriosclerosis, cerebrovascular disease (stroke) or transient ischemic attack (TIA)?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q2f" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q2f" value="No"> No</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-group">
+    <p class="question-text"><strong>3. Within the last five (5) years:</strong></p>
+
+    <div class="sub-question">
+      <p class="question-text"><strong>a.</strong> Have you had an amputation as a result of a disease?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q3a" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q3a" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>b.</strong> Have you been treated and/or been in a hospital for drug or alcohol use, joined a support group, been advised to reduce your consumption, or to receive treatment for it?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q3b" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q3b" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>c.</strong> Have you been convicted, sentenced, incarcerated, on probation or parole or charged for a criminal offense (including offenses associated with driving under the influence-DUI)?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q3c" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q3c" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>d.</strong> Did you receive a record suspension or a pardon or an unconditional discharge?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q3d" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q3d" value="No"> No</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question-group">
+    <p class="question-text"><strong>4. Within the last three (3) years:</strong></p>
+
+    <div class="sub-question">
+      <p class="question-text"><strong>a.</strong> Have you had, or been told you had, or been treated for leukemia, lymphoma, malignant tumor or any form of cancer (other than basal cell carcinoma)?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q4a" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q4a" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>b.</strong> Relating to a cancer diagnosis, has a healthcare professional prescribed you an antineoplastic such as Anastrozole (i.e. Arimidex), Letrozole (i.e. Femara) Exemestase (i.e. Aromasin) or hormone therapy (i.e. tamoxifen)?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q4b" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q4b" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>c.</strong> Have you used any hard drugs except as prescribed by a physician or have you used drugs such as methadone, Narcan, Naloxone or Suboxone (including all generic versions) prescribed or not by a physician?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q4c" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q4c" value="No"> No</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question-group">
+    <p class="question-text"><strong>5. Are you:</strong></p>
+
+    <div class="sub-question">
+      <p class="question-text"><strong>a.</strong> Presently hospitalized or in a nursing facility including a centre or a home for individuals with reduced autonomy?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q5a" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q5a" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>b.</strong> Presently bedridden or wheelchair bound?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q5b" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q5b" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>c.</strong> Presently awaiting surgery or been advised to undergo surgery that has not yet been completed?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q5c" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q5c" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>d.</strong> Presently awaiting a test (excluding routine annual tests), procedure or test result, or have you been advised to have a test or procedure that has not yet been completed?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q5d" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q5d" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>e.</strong> Aware of any abnormal test(s) or exam(s) for which further evaluation was required which has not yet been completed?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q5e" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q5e" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>f.</strong> Waiting for an appointment with a specialist for a diagnostic investigation?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q5f" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q5f" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>g.</strong> Experiencing any signs and/or symptoms for which you have not yet consulted a medical professional?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s1q5g" value="Yes"> Yes</label>
+        <label><input type="radio" name="s1q5g" value="No"> No</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q6 — Height/Weight table (gender-dependent) -->
+  <div class="question-group">
+    <p class="question-text"><strong>6.</strong> Is your weight greater than the weight corresponding to your height in the following table?</p>
+    <!-- Female table (default) -->
+    <table class="hw-table hw-female" id="s1q6Female">
+      <thead>
+        <tr><th>Height (ft/in)</th><th>Weight (lbs)</th><th>Height (m)</th><th>Weight (kg)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>4'5" - 4'7"</td><td>188</td><td>1.33 - 1.41</td><td>86</td></tr>
+        <tr><td>4'8" - 4'10"</td><td>210</td><td>1.42 - 1.49</td><td>95</td></tr>
+        <tr><td>4'11" - 5'1"</td><td>233</td><td>1.50 - 1.56</td><td>106</td></tr>
+        <tr><td>5'2" - 5'4"</td><td>255</td><td>1.57 - 1.64</td><td>116</td></tr>
+        <tr><td>5'5" - 5'7"</td><td>280</td><td>1.65 - 1.72</td><td>127</td></tr>
+        <tr><td>5'8" - 5'10"</td><td>310</td><td>1.73 - 1.79</td><td>141</td></tr>
+        <tr><td>5'11" - 6'1"</td><td>340</td><td>1.80 - 1.87</td><td>154</td></tr>
+        <tr><td>6'2" - 6'4"</td><td>363</td><td>1.88 - 1.95</td><td>165</td></tr>
+        <tr><td>6'5" - 6'7"</td><td>400</td><td>1.96 - 2.01</td><td>181</td></tr>
+        <tr><td>6'8" - 6'10"</td><td>430</td><td>2.02 - 2.08</td><td>195</td></tr>
+      </tbody>
+    </table>
+    <!-- Male table -->
+    <table class="hw-table hw-male" id="s1q6Male" style="display:none;">
+      <thead>
+        <tr><th>Height (ft/in)</th><th>Weight (lbs)</th><th>Height (m)</th><th>Weight (kg)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>4'5" - 4'7"</td><td>188</td><td>1.33 - 1.41</td><td>86</td></tr>
+        <tr><td>4'8" - 4'10"</td><td>210</td><td>1.42 - 1.49</td><td>95</td></tr>
+        <tr><td>4'11" - 5'1"</td><td>233</td><td>1.50 - 1.56</td><td>106</td></tr>
+        <tr><td>5'2" - 5'4"</td><td>255</td><td>1.57 - 1.64</td><td>116</td></tr>
+        <tr><td>5'5" - 5'7"</td><td>280</td><td>1.65 - 1.72</td><td>127</td></tr>
+        <tr><td>5'8" - 5'10"</td><td>310</td><td>1.73 - 1.79</td><td>141</td></tr>
+        <tr><td>5'11" - 6'1"</td><td>340</td><td>1.80 - 1.87</td><td>154</td></tr>
+        <tr><td>6'2" - 6'4"</td><td>363</td><td>1.88 - 1.95</td><td>165</td></tr>
+        <tr><td>6'5" - 6'7"</td><td>400</td><td>1.96 - 2.01</td><td>181</td></tr>
+        <tr><td>6'8" - 6'10"</td><td>430</td><td>2.02 - 2.08</td><td>195</td></tr>
+      </tbody>
+    </table>
+    <div class="radio-group">
+      <label><input type="radio" name="s1q6" value="Yes"> Yes</label>
+      <label><input type="radio" name="s1q6" value="No"> No</label>
+    </div>
+  </div>
+
+  <div class="validation-msg" id="s1Validation">Please answer all questions before proceeding.</div>
+
+  <div class="btn-row">
+    <div></div>
+    <button class="btn btn-primary" onclick="handleSection1Next()">Next</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2 — Questions 1-5 (any Yes → final, all No → section 3) -->
+<!-- ============================================================ -->
+<div class="form-section" id="section2">
+
+  <!-- Q1 -->
+  <div class="question-group">
+    <p class="question-text"><strong>1. Within the last two (2) years:</strong></p>
+    <div class="sub-question">
+      <p class="question-text"><strong>a.</strong> Have you had a life insurance application declined or postponed?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s2q1a" value="Yes"> Yes</label>
+        <label><input type="radio" name="s2q1a" value="No"> No</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-group">
+    <p class="question-text"><strong>2. Within the last five (5) years:</strong></p>
+    <div class="sub-question">
+      <p class="question-text"><strong>a.</strong> Have you had, been told you had, or been treated (including dialysis) for chronic kidney disease (chronic kidney insufficiency of any degree, chronic kidney failure, Polycystic kidney disease (PKD) or any other types of chronic kidney disease (CKD))?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s2q2a" value="Yes"> Yes</label>
+        <label><input type="radio" name="s2q2a" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>b.</strong> Have you had, been told you had, or been treated for a chronic liver disease (including cirrhosis, fibrosis, hepatitis C, or any other types of chronic hepatitis)?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s2q2b" value="Yes"> Yes</label>
+        <label><input type="radio" name="s2q2b" value="No"> No</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-group">
+    <p class="question-text"><strong>3. Within the last three (3) years:</strong></p>
+
+    <div class="sub-question">
+      <p class="question-text"><strong>a.</strong> With regards to cardiac chest pain or angina, heart attack, heart valve disease, arteriosclerosis or heart disease:</p>
+      <div class="sub-sub-question">
+        <p class="question-text">Have you been diagnosed and/or been treated with anticoagulants and/or antiplatelets?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="s2q3a1" value="Yes"> Yes</label>
+          <label><input type="radio" name="s2q3a1" value="No"> No</label>
+        </div>
+      </div>
+      <div class="sub-sub-question">
+        <p class="question-text">Have you undergone surgery (including bypass, angioplasty, pacemaker, or insertion of a stent or prothesis)?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="s2q3a2" value="Yes"> Yes</label>
+          <label><input type="radio" name="s2q3a2" value="No"> No</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-question">
+      <p class="question-text"><strong>b.</strong> With regards to cerebrovascular disease (stroke), transient ischemic attack (TIA) or vascular disease of the arms and/or legs (excluding varicose veins and superficial phlebitis):</p>
+      <div class="sub-sub-question">
+        <p class="question-text">Have you been diagnosed and/or been treated with anticoagulants and/or antiplatelets?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="s2q3b1" value="Yes"> Yes</label>
+          <label><input type="radio" name="s2q3b1" value="No"> No</label>
+        </div>
+      </div>
+      <div class="sub-sub-question">
+        <p class="question-text">Have you undergone surgery?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="s2q3b2" value="Yes"> Yes</label>
+          <label><input type="radio" name="s2q3b2" value="No"> No</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question-group">
+    <p class="question-text"><strong>4. Within the last twelve (12) months:</strong></p>
+
+    <div class="sub-question">
+      <p class="question-text"><strong>a.</strong> Have you undergone surgery for an aneurysm?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s2q4a" value="Yes"> Yes</label>
+        <label><input type="radio" name="s2q4a" value="No"> No</label>
+      </div>
+    </div>
+
+    <div class="sub-question">
+      <p class="question-text"><strong>b.</strong> With regards to depression or any mental health disorder:</p>
+      <div class="sub-sub-question">
+        <p class="question-text">Have you been hospitalized?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="s2q4b1" value="Yes"> Yes</label>
+          <label><input type="radio" name="s2q4b1" value="No"> No</label>
+        </div>
+      </div>
+      <div class="sub-sub-question">
+        <p class="question-text">Has your medication been changed by a healthcare professional (addition or replacement of a medication, increase or decrease of dosage)?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="s2q4b2" value="Yes"> Yes</label>
+          <label><input type="radio" name="s2q4b2" value="No"> No</label>
+        </div>
+      </div>
+      <div class="sub-sub-question">
+        <p class="question-text">Have there been times where you did not follow your treatment plan as established by a healthcare professional (including medication)?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="s2q4b3" value="Yes"> Yes</label>
+          <label><input type="radio" name="s2q4b3" value="No"> No</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-question">
+      <p class="question-text"><strong>c.</strong> If you have diabetes:</p>
+      <div class="sub-sub-question">
+        <p class="question-text">Has your medication been changed by a healthcare professional (addition or replacement of a medication, increase or decrease of dosage)?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="s2q4c1" value="Yes"> Yes</label>
+          <label><input type="radio" name="s2q4c1" value="No"> No</label>
+        </div>
+      </div>
+      <div class="sub-sub-question">
+        <p class="question-text">Have there been times where you did not follow your treatment plan as established by a healthcare professional (including medication)?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="s2q4c2" value="Yes"> Yes</label>
+          <label><input type="radio" name="s2q4c2" value="No"> No</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-question">
+      <p class="question-text"><strong>d.</strong> If you have high cholesterol and/or blood pressure:</p>
+      <div class="sub-sub-question">
+        <p class="question-text">Has your medication been changed by a healthcare professional (addition or replacement of a medication, increase or decrease of dosage)?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="s2q4d1" value="Yes"> Yes</label>
+          <label><input type="radio" name="s2q4d1" value="No"> No</label>
+        </div>
+      </div>
+      <div class="sub-sub-question">
+        <p class="question-text">Have there been times where you did not follow your treatment plan as established by a healthcare professional (including medication)?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="s2q4d2" value="Yes"> Yes</label>
+          <label><input type="radio" name="s2q4d2" value="No"> No</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question-group">
+    <p class="question-text"><strong>5. Within the next two (2) years:</strong></p>
+    <div class="sub-question">
+      <p class="question-text"><strong>a.</strong> Do you foresee travelling to high-risk regions or regions of conflict or war?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s2q5a" value="Yes"> Yes</label>
+        <label><input type="radio" name="s2q5a" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>b.</strong> Do you intend to reside outside Canada or the USA for at least six (6) consecutive months?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s2q5b" value="Yes"> Yes</label>
+        <label><input type="radio" name="s2q5b" value="No"> No</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="validation-msg" id="s2Validation">Please answer all questions before proceeding.</div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goToSection(1)">Back</button>
+    <button class="btn btn-primary" onclick="handleSection2Next()">Next</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3 — Questions 1-4 (always proceeds to final) -->
+<!-- ============================================================ -->
+<div class="form-section" id="section3">
+
+  <!-- Q1 — Height/Weight table (gender-dependent) -->
+  <div class="question-group">
+    <p class="question-text"><strong>1.</strong> Is your weight greater than the weight corresponding to your height in the following table?</p>
+    <!-- Female table (default) -->
+    <table class="hw-table hw-female" id="s3q1Female">
+      <thead>
+        <tr><th>Height (ft/in)</th><th>Weight (lbs)</th><th>Height (m)</th><th>Weight (kg)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>4'5" - 4'7"</td><td>170</td><td>1.33 - 1.41</td><td>77</td></tr>
+        <tr><td>4'8" - 4'10"</td><td>190</td><td>1.42 - 1.49</td><td>86</td></tr>
+        <tr><td>4'11" - 5'1"</td><td>210</td><td>1.50 - 1.56</td><td>95</td></tr>
+        <tr><td>5'2" - 5'4"</td><td>235</td><td>1.57 - 1.64</td><td>107</td></tr>
+        <tr><td>5'5" - 5'7"</td><td>255</td><td>1.65 - 1.72</td><td>116</td></tr>
+        <tr><td>5'8" - 5'10"</td><td>280</td><td>1.73 - 1.79</td><td>127</td></tr>
+        <tr><td>5'11" - 6'1"</td><td>305</td><td>1.80 - 1.87</td><td>138</td></tr>
+        <tr><td>6'2" - 6'4"</td><td>335</td><td>1.88 - 1.95</td><td>152</td></tr>
+        <tr><td>6'5" - 6'7"</td><td>355</td><td>1.96 - 2.01</td><td>161</td></tr>
+        <tr><td>6'8" - 6'10"</td><td>380</td><td>2.02 - 2.08</td><td>172</td></tr>
+      </tbody>
+    </table>
+    <!-- Male table -->
+    <table class="hw-table hw-male" id="s3q1Male" style="display:none;">
+      <thead>
+        <tr><th>Height (ft/in)</th><th>Weight (lbs)</th><th>Height (m)</th><th>Weight (kg)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>4'5" - 4'7"</td><td>170</td><td>1.33 - 1.41</td><td>77</td></tr>
+        <tr><td>4'8" - 4'10"</td><td>190</td><td>1.42 - 1.49</td><td>86</td></tr>
+        <tr><td>4'11" - 5'1"</td><td>210</td><td>1.50 - 1.56</td><td>95</td></tr>
+        <tr><td>5'2" - 5'4"</td><td>235</td><td>1.57 - 1.64</td><td>107</td></tr>
+        <tr><td>5'5" - 5'7"</td><td>255</td><td>1.65 - 1.72</td><td>116</td></tr>
+        <tr><td>5'8" - 5'10"</td><td>280</td><td>1.73 - 1.79</td><td>127</td></tr>
+        <tr><td>5'11" - 6'1"</td><td>305</td><td>1.80 - 1.87</td><td>138</td></tr>
+        <tr><td>6'2" - 6'4"</td><td>335</td><td>1.88 - 1.95</td><td>152</td></tr>
+        <tr><td>6'5" - 6'7"</td><td>355</td><td>1.96 - 2.01</td><td>161</td></tr>
+        <tr><td>6'8" - 6'10"</td><td>380</td><td>2.02 - 2.08</td><td>172</td></tr>
+      </tbody>
+    </table>
+    <div class="radio-group">
+      <label><input type="radio" name="s3q1" value="Yes"> Yes</label>
+      <label><input type="radio" name="s3q1" value="No"> No</label>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-group">
+    <p class="question-text"><strong>2. Within the last five (5) years:</strong></p>
+    <div class="sub-question">
+      <p class="question-text"><strong>a.</strong> Have you had or been told you had or been treated for leukemia, lymphoma, malignant tumor or any form of cancer (other than basal cell carcinoma)?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s3q2a" value="Yes"> Yes</label>
+        <label><input type="radio" name="s3q2a" value="No"> No</label>
+      </div>
+    </div>
+    <div class="sub-question">
+      <p class="question-text"><strong>b.</strong> Relating to a cancer diagnosis, has a healthcare professional prescribed you an antineoplastic such as Anastrozole (i.e. Arimidex), Letrozole (i.e. Femara) Exemestase (i.e. Aromasin) or hormone therapy (i.e. tamoxifen)?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s3q2b" value="Yes"> Yes</label>
+        <label><input type="radio" name="s3q2b" value="No"> No</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-group">
+    <p class="question-text"><strong>3.</strong> Within the last twelve (12) months, has your weight decreased by 10% or more (excluding after a diet or childbirth)?</p>
+    <div class="radio-group">
+      <label><input type="radio" name="s3q3" value="Yes"> Yes</label>
+      <label><input type="radio" name="s3q3" value="No"> No</label>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question-group">
+    <p class="question-text"><strong>4. Family history. Has a member of your immediate family (father, mother, brother or sister) been diagnosed before age 60 with any of the following conditions:</strong></p>
+    <div class="sub-question">
+      <p class="question-text"><strong>a.</strong> Huntington's disease or Polycystic kidney disease (PKD)?</p>
+      <div class="radio-group">
+        <label><input type="radio" name="s3q4a" value="Yes"> Yes</label>
+        <label><input type="radio" name="s3q4a" value="No"> No</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="validation-msg" id="s3Validation">Please answer all questions before proceeding.</div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goToSection(2)">Back</button>
+    <button class="btn btn-primary" onclick="handleSection3Next()">Next</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FINAL SECTION -->
+<!-- ============================================================ -->
+<div class="form-section" id="section4">
+
+  <!-- Name, Email, Phone -->
+  <div class="question-group">
+    <p class="question-text"><strong>Your Information</strong></p>
+    <div class="field-row-inline">
+      <div class="field-col">
+        <label for="applicantName">Full Name</label>
+        <input type="text" id="applicantName" name="applicantName">
+      </div>
+    </div>
+    <div class="field-row-inline">
+      <div class="field-col">
+        <label for="applicantEmail">Email Address</label>
+        <input type="email" id="applicantEmail" name="applicantEmail">
+      </div>
+      <div class="field-col">
+        <label for="applicantPhone">Phone Number</label>
+        <input type="tel" id="applicantPhone" name="applicantPhone">
+      </div>
+    </div>
+    <div class="field-row-inline">
+      <div class="field-col" style="max-width: 400px;">
+        <label for="applicantDOB">Date of Birth</label>
+        <input type="date" id="applicantDOB" name="applicantDOB">
+      </div>
+    </div>
+  </div>
+
+  <!-- Province of Residency -->
+  <div class="question-group">
+    <p class="question-text"><strong>Province of Residency</strong></p>
+    <select id="provinceResidency" name="provinceResidency">
+      <option value="">Select Province</option>
+      <option value="Alberta">Alberta</option>
+      <option value="British Columbia">British Columbia</option>
+      <option value="Manitoba">Manitoba</option>
+      <option value="New Brunswick">New Brunswick</option>
+      <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+      <option value="Nova Scotia">Nova Scotia</option>
+      <option value="Ontario">Ontario</option>
+      <option value="Prince Edward Island">Prince Edward Island</option>
+      <option value="Quebec">Quebec</option>
+      <option value="Saskatchewan">Saskatchewan</option>
+      <option value="Northwest Territories">Northwest Territories</option>
+      <option value="Nunavut">Nunavut</option>
+      <option value="Yukon">Yukon</option>
+    </select>
+  </div>
+
+  <!-- Proceeds of Benefit Amount -->
+  <div class="question-group">
+    <p class="question-text"><strong>Proceeds of Benefit Amount(s)</strong></p>
+    <p class="question-text">Who would you like to receive the Benefit Amount(s)?</p>
+    <p class="question-text" style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Choose all that apply.</p>
+    <div class="checkbox-list">
+      <label class="checkbox-option"><input type="checkbox" name="beneficiary" value="Daughter"> Daughter</label>
+      <label class="checkbox-option"><input type="checkbox" name="beneficiary" value="Son"> Son</label>
+      <label class="checkbox-option"><input type="checkbox" name="beneficiary" value="Mother"> Mother</label>
+      <label class="checkbox-option"><input type="checkbox" name="beneficiary" value="Father"> Father</label>
+      <label class="checkbox-option"><input type="checkbox" name="beneficiary" value="Sister"> Sister</label>
+      <label class="checkbox-option"><input type="checkbox" name="beneficiary" value="Brother"> Brother</label>
+      <label class="checkbox-option"><input type="checkbox" name="beneficiary" value="Niece"> Niece</label>
+      <label class="checkbox-option"><input type="checkbox" name="beneficiary" value="Nephew"> Nephew</label>
+      <label class="checkbox-option"><input type="checkbox" name="beneficiary" value="Spouse"> Spouse</label>
+      <label class="checkbox-option"><input type="checkbox" name="beneficiary" value="Other"> Other</label>
+    </div>
+  </div>
+
+  <!-- Affordability Guidelines -->
+  <div class="question-group">
+    <p class="question-text"><strong>Affordability Guidelines</strong></p>
+    <p class="question-text">The Guaranteed Access Program is designed to offer you the <strong>highest benefit</strong> at the most affordable cost.</p>
+    <select id="affordability" name="affordability">
+      <option value="">Select:</option>
+      <option value="$1.50 per day">$1.50 per day</option>
+      <option value="$2.00 per day">$2.00 per day</option>
+      <option value="$2.50 per day">$2.50 per day</option>
+      <option value="$3.00 per day">$3.00 per day</option>
+      <option value="$3.50 per day">$3.50 per day</option>
+      <option value="$4.00 per day">$4.00 per day</option>
+      <option value="Other">Other</option>
+    </select>
+  </div>
+
+  <!-- Tobacco -->
+  <div class="question-group">
+    <p class="question-text"><strong>2.</strong> When was the last time you used tobacco in any form (including cigarettes, cigars, cigarillos, marijuana/cannabis mixed with tobacco, electronic cigarettes, gum, patches, chewing tobacco or snuff, betel nuts, shisha, hookah / water pipe, etc.)?</p>
+    <select name="tobacco" id="tobaccoSelect" class="dropdown-select">
+      <option value="">Select:</option>
+      <option value="Never">Never</option>
+      <option value="In the past year">In the past year</option>
+      <option value="Between 1 and 3 years ago">Between 1 and 3 years ago</option>
+      <option value="Between 3 and 5 years ago">Between 3 and 5 years ago</option>
+      <option value="More than 5 years ago">More than 5 years ago</option>
+    </select>
+  </div>
+
+  <!-- Born in Canada -->
+  <div class="question-group">
+    <p class="question-text"><strong>2.</strong> Were you born in Canada?</p>
+    <div class="radio-group">
+      <label><input type="radio" name="bornCanada" value="Yes" onchange="toggleBornCanada()"> Yes</label>
+      <label><input type="radio" name="bornCanada" value="No" onchange="toggleBornCanada()"> No</label>
+    </div>
+
+    <!-- Conditional: Not born in Canada -->
+    <div class="conditional-field" id="notBornCanadaFields">
+      <div class="field-row">
+        <label for="countryBirth">What is your country of birth?</label>
+        <input type="text" id="countryBirth" name="countryBirth" placeholder="">
+      </div>
+      <div class="field-row">
+        <label for="arrivalDate">What was your date of arrival/landing in Canada?</label>
+        <input type="month" id="arrivalDate" name="arrivalDate">
+      </div>
+      <div class="field-row">
+        <label for="legalStatus">What is your legal status?</label>
+        <select id="legalStatus" name="legalStatus">
+          <option value="">Select:</option>
+          <option value="Canadian Citizen">Canadian Citizen</option>
+          <option value="Permanent Resident">Permanent Resident</option>
+          <option value="Entrepreneur / Start-up">Entrepreneur / Start-up</option>
+          <option value="International Experience Canada">International Experience Canada</option>
+          <option value="Investor">Investor</option>
+          <option value="Personal support / Care worker">Personal support / Care worker</option>
+          <option value="Physician Caregiver Program">Physician Caregiver Program</option>
+          <option value="Post-graduate work permit">Post-graduate work permit</option>
+          <option value="Provincial Nominee">Provincial Nominee</option>
+          <option value="Quebec Selection Certificate">Quebec Selection Certificate</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Family Doctor -->
+  <div class="question-group">
+    <p class="question-text"><strong>3.</strong> Do you have a family doctor or a regular health care facility?</p>
+    <div class="radio-group">
+      <label><input type="radio" name="familyDoctor" value="Yes" onchange="toggleFamilyDoctor()"> Yes</label>
+      <label><input type="radio" name="familyDoctor" value="No" onchange="toggleFamilyDoctor()"> No</label>
+    </div>
+
+    <!-- Conditional: Has family doctor -->
+    <div class="conditional-field" id="familyDoctorFields">
+      <p style="font-size: 0.9rem; margin-bottom: 14px; color: #555;">Who is your family doctor or a regular health care facility?<br>Your doctor may be contacted by telephone and/or in writing to validate the information.</p>
+      <div class="field-row">
+        <label for="doctorName">Full name</label>
+        <input type="text" id="doctorName" name="doctorName" placeholder="">
+      </div>
+      <div class="field-row">
+        <label for="doctorProvince">Province</label>
+        <select id="doctorProvince" name="doctorProvince">
+          <option value="">Select Province</option>
+          <option value="Alberta">Alberta</option>
+          <option value="British Columbia">British Columbia</option>
+          <option value="Manitoba">Manitoba</option>
+          <option value="New Brunswick">New Brunswick</option>
+          <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+          <option value="Nova Scotia">Nova Scotia</option>
+          <option value="Ontario">Ontario</option>
+          <option value="Prince Edward Island">Prince Edward Island</option>
+          <option value="Quebec">Quebec</option>
+          <option value="Saskatchewan">Saskatchewan</option>
+          <option value="Northwest Territories">Northwest Territories</option>
+          <option value="Nunavut">Nunavut</option>
+          <option value="Yukon">Yukon</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label for="doctorCity">City</label>
+        <input type="text" id="doctorCity" name="doctorCity" placeholder="">
+      </div>
+      <div class="field-row">
+        <label for="lastConsultation">What was the date of your last consultation?</label>
+        <input type="month" id="lastConsultation" name="lastConsultation">
+      </div>
+    </div>
+  </div>
+
+  <!-- Consent -->
+  <div class="consent-block">
+    <p>I authorize iA Financial Group to collect and use my personal information necessary to establish my eligibility for the Access Life product, including information about my health. Please know that we protect the confidentiality of your personal information. To learn more, please refer to the Privacy Notice available at <a href="https://ia.ca/privacy-policy" target="_blank" rel="noopener">ia.ca/privacy-policy</a>.</p>
+    <div class="checkbox-row">
+      <input type="checkbox" id="consentAgreed" name="consentAgreed">
+      <label for="consentAgreed">Agreed</label>
+    </div>
+  </div>
+
+  <div class="consent-block" style="margin-top: 14px;">
+    <p><strong>Declaration of good faith</strong></p>
+    <p>I declare that the information provided in this form is accurate.</p>
+    <div class="checkbox-row">
+      <input type="checkbox" id="consentConfirmed" name="consentConfirmed">
+      <label for="consentConfirmed">Confirmed</label>
+    </div>
+  </div>
+
+  <div class="validation-msg" id="s4Validation">Please complete all required fields and accept both consent checkboxes.</div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBack()">Back</button>
+    <button class="btn btn-submit" onclick="submitForm()">Submit</button>
+  </div>
+</div>
+
+<!-- Success Screen -->
+<div class="form-section" id="successScreen" style="display:none;">
+  <div class="success-screen">
+    <div class="checkmark">&#10003;</div>
+    <h2>Thank You!</h2>
+    <p>Your form has been submitted successfully.</p>
+  </div>
+</div>
+
+</div><!-- /.container -->
+
+<script>
+  // ---- Gender toggle for height/weight tables ----
+  function updateGenderTables() {
+    const gender = document.querySelector('input[name="gender"]:checked')?.value;
+    const isMale = gender === 'Male';
+    // Section 1 Q6
+    document.getElementById('s1q6Female').style.display = isMale ? 'none' : '';
+    document.getElementById('s1q6Male').style.display = isMale ? '' : 'none';
+    // Section 3 Q1
+    document.getElementById('s3q1Female').style.display = isMale ? 'none' : '';
+    document.getElementById('s3q1Male').style.display = isMale ? '' : 'none';
+  }
+
+  // Track which section we came from, and the route taken
+  let currentSection = 1;
+  let routeTaken = 'Section 1';
+  let cameFromSection = 1; // for the Back button on final section
+
+  // ---- Navigation ----
+  function goToSection(num) {
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('section' + num).classList.add('active');
+    currentSection = num;
+    updateStepIndicator(num);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goToFinal(fromSection) {
+    cameFromSection = fromSection;
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('section4').classList.add('active');
+    currentSection = 4;
+    updateStepIndicator(4);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goBack() {
+    goToSection(cameFromSection);
+  }
+
+  function updateStepIndicator(activeStep) {
+    document.querySelectorAll('.step-item').forEach(item => {
+      const step = parseInt(item.dataset.step);
+      item.classList.remove('active', 'completed');
+      if (step === activeStep) item.classList.add('active');
+      else if (step < activeStep) item.classList.add('completed');
+    });
+  }
+
+  // ---- Section 1: any Yes → final, all No → section 2 ----
+  function handleSection1Next() {
+    const names = ['gender','s1q1','s1q2a','s1q2b','s1q2c','s1q2d','s1q2e','s1q2f','s1q3a','s1q3b','s1q3c','s1q3d','s1q4a','s1q4b','s1q4c','s1q5a','s1q5b','s1q5c','s1q5d','s1q5e','s1q5f','s1q5g','s1q6'];
+    if (!allAnswered(names)) {
+      showValidation('s1Validation');
+      return;
+    }
+    hideValidation('s1Validation');
+
+    if (anyYes(names)) {
+      routeTaken = 'Section 1 → Final (Yes detected)';
+      goToFinal(1);
+    } else {
+      routeTaken = 'Section 1 → Section 2';
+      goToSection(2);
+    }
+  }
+
+  // ---- Section 2: any Yes → final, all No → section 3 ----
+  function handleSection2Next() {
+    const names = ['s2q1a','s2q2a','s2q2b','s2q3a1','s2q3a2','s2q3b1','s2q3b2','s2q4a','s2q4b1','s2q4b2','s2q4b3','s2q4c1','s2q4c2','s2q4d1','s2q4d2','s2q5a','s2q5b'];
+    if (!allAnswered(names)) {
+      showValidation('s2Validation');
+      return;
+    }
+    hideValidation('s2Validation');
+
+    if (anyYes(names)) {
+      routeTaken = 'Section 1 → Section 2 → Final (Yes detected)';
+      goToFinal(2);
+    } else {
+      routeTaken = 'Section 1 → Section 2 → Section 3';
+      goToSection(3);
+    }
+  }
+
+  // ---- Section 3: always → final ----
+  function handleSection3Next() {
+    const names = ['s3q1','s3q2a','s3q2b','s3q3','s3q4a'];
+    if (!allAnswered(names)) {
+      showValidation('s3Validation');
+      return;
+    }
+    hideValidation('s3Validation');
+    routeTaken = 'Section 1 → Section 2 → Section 3 → Final';
+    goToFinal(3);
+  }
+
+  // ---- Helpers ----
+  function allAnswered(names) {
+    return names.every(n => document.querySelector(`input[name="${n}"]:checked`));
+  }
+
+  function anyYes(names) {
+    return names.some(n => {
+      const el = document.querySelector(`input[name="${n}"]:checked`);
+      return el && el.value === 'Yes';
+    });
+  }
+
+  function showValidation(id) {
+    document.getElementById(id).classList.add('show');
+  }
+  function hideValidation(id) {
+    document.getElementById(id).classList.remove('show');
+  }
+
+  // ---- Conditional toggles (final section) ----
+  function toggleBornCanada() {
+    const val = document.querySelector('input[name="bornCanada"]:checked')?.value;
+    document.getElementById('notBornCanadaFields').classList.toggle('show', val === 'No');
+  }
+
+  function toggleFamilyDoctor() {
+    const val = document.querySelector('input[name="familyDoctor"]:checked')?.value;
+    document.getElementById('familyDoctorFields').classList.toggle('show', val === 'Yes');
+  }
+
+  // ---- Collect all form data ----
+  function collectFormData() {
+    const data = { section1: {}, section2: {}, section3: {}, finalSection: {}, routeTaken: routeTaken };
+
+    // Gender
+    const genderEl = document.querySelector('input[name="gender"]:checked');
+    data.section1['Gender'] = genderEl ? genderEl.value : 'Not answered';
+
+    // Section 1
+    const s1Questions = {
+      s1q1: '1. MAID discussion',
+      s1q2a: '2a. AIDS/HIV',
+      s1q2b: '2b. Heart failure/cardiomyopathy',
+      s1q2c: '2c. Cystic fibrosis/Alzheimer\'s/dementia/Huntington\'s/Parkinson\'s/ALS/muscular dystrophy/ataxia',
+      s1q2d: '2d. Chronic respiratory disease requiring oxygen/ventilator',
+      s1q2e: '2e. Organ/bone marrow transplant',
+      s1q2f: '2f. Heart conditions before age 40',
+      s1q3a: '3a. Amputation from disease (5yr)',
+      s1q3b: '3b. Drug/alcohol treatment (5yr)',
+      s1q3c: '3c. Criminal offense (5yr)',
+      s1q3d: '3d. Record suspension/pardon (5yr)',
+      s1q4a: '4a. Cancer/leukemia/lymphoma (3yr)',
+      s1q4b: '4b. Antineoplastic prescription (3yr)',
+      s1q4c: '4c. Hard drugs/methadone/Narcan/Suboxone (3yr)',
+      s1q5a: '5a. Hospitalized/nursing facility',
+      s1q5b: '5b. Bedridden/wheelchair',
+      s1q5c: '5c. Awaiting surgery',
+      s1q5d: '5d. Awaiting test/procedure',
+      s1q5e: '5e. Abnormal test requiring further evaluation',
+      s1q5f: '5f. Waiting for specialist appointment',
+      s1q5g: '5g. Unexplained signs/symptoms',
+      s1q6: '6. Weight exceeds table (Section 1)'
+    };
+    for (const [name, label] of Object.entries(s1Questions)) {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      data.section1[label] = el ? el.value : 'Not answered';
+    }
+
+    // Section 2
+    const s2Questions = {
+      s2q1a: '1a. Insurance application declined/postponed (2yr)',
+      s2q2a: '2a. Chronic kidney disease (5yr)',
+      s2q2b: '2b. Chronic liver disease (5yr)',
+      s2q3a1: '3a-I. Cardiac — anticoagulants/antiplatelets (3yr)',
+      s2q3a2: '3a-II. Cardiac — surgery (3yr)',
+      s2q3b1: '3b-I. Cerebrovascular — anticoagulants/antiplatelets (3yr)',
+      s2q3b2: '3b-II. Cerebrovascular — surgery (3yr)',
+      s2q4a: '4a. Aneurysm surgery (12mo)',
+      s2q4b1: '4b-I. Mental health — hospitalized (12mo)',
+      s2q4b2: '4b-II. Mental health — medication changed (12mo)',
+      s2q4b3: '4b-III. Mental health — didn\'t follow treatment (12mo)',
+      s2q4c1: '4c-I. Diabetes — medication changed (12mo)',
+      s2q4c2: '4c-II. Diabetes — didn\'t follow treatment (12mo)',
+      s2q4d1: '4d-I. Cholesterol/BP — medication changed (12mo)',
+      s2q4d2: '4d-II. Cholesterol/BP — didn\'t follow treatment (12mo)',
+      s2q5a: '5a. Travel to high-risk regions (next 2yr)',
+      s2q5b: '5b. Reside outside Canada/USA 6+ months (next 2yr)'
+    };
+    for (const [name, label] of Object.entries(s2Questions)) {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      data.section2[label] = el ? el.value : 'Not answered';
+    }
+
+    // Section 3
+    const s3Questions = {
+      s3q1: '1. Weight exceeds table (Section 3)',
+      s3q2a: '2a. Cancer/leukemia/lymphoma (5yr)',
+      s3q2b: '2b. Antineoplastic prescription (5yr)',
+      s3q3: '3. Weight decreased 10%+ (12mo)',
+      s3q4a: '4a. Family history — Huntington\'s/PKD before 60'
+    };
+    for (const [name, label] of Object.entries(s3Questions)) {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      data.section3[label] = el ? el.value : 'Not answered';
+    }
+
+    // Final section
+    data.applicantName = document.getElementById('applicantName').value || 'Not provided';
+    data.finalSection['Full name'] = document.getElementById('applicantName').value || 'Not answered';
+    data.finalSection['Email address'] = document.getElementById('applicantEmail').value || 'Not answered';
+    data.finalSection['Phone number'] = document.getElementById('applicantPhone').value || 'Not answered';
+    data.finalSection['Date of birth'] = document.getElementById('applicantDOB').value || 'Not answered';
+    data.finalSection['Province of residency'] = document.getElementById('provinceResidency').value || 'Not answered';
+    const beneficiaries = [...document.querySelectorAll('input[name="beneficiary"]:checked')].map(cb => cb.value);
+    data.finalSection['Benefit amount recipients'] = beneficiaries.length > 0 ? beneficiaries.join(', ') : 'Not answered';
+    data.finalSection['Affordability guideline'] = document.getElementById('affordability').value || 'Not answered';
+    data.finalSection['Tobacco use'] = document.getElementById('tobaccoSelect').value || 'Not answered';
+
+    const bornCanada = document.querySelector('input[name="bornCanada"]:checked');
+    data.finalSection['Born in Canada'] = bornCanada ? bornCanada.value : 'Not answered';
+
+    if (bornCanada && bornCanada.value === 'No') {
+      data.finalSection['Country of birth'] = document.getElementById('countryBirth').value || 'Not answered';
+      data.finalSection['Arrival date in Canada'] = document.getElementById('arrivalDate').value || 'Not answered';
+      data.finalSection['Legal status'] = document.getElementById('legalStatus').value || 'Not answered';
+    }
+
+    const familyDoctor = document.querySelector('input[name="familyDoctor"]:checked');
+    data.finalSection['Has family doctor'] = familyDoctor ? familyDoctor.value : 'Not answered';
+
+    if (familyDoctor && familyDoctor.value === 'Yes') {
+      data.finalSection['Doctor full name'] = document.getElementById('doctorName').value || 'Not answered';
+      data.finalSection['Doctor province'] = document.getElementById('doctorProvince').value || 'Not answered';
+      data.finalSection['Doctor city'] = document.getElementById('doctorCity').value || 'Not answered';
+      data.finalSection['Last consultation date'] = document.getElementById('lastConsultation').value || 'Not answered';
+    }
+
+    data.finalSection['Privacy consent agreed'] = document.getElementById('consentAgreed').checked ? 'Yes' : 'No';
+    data.finalSection['Good faith declaration confirmed'] = document.getElementById('consentConfirmed').checked ? 'Yes' : 'No';
+
+    return data;
+  }
+
+  // ---- Submit ----
+  async function submitForm() {
+    // Validate final section basics
+    const applicantName = document.getElementById('applicantName').value.trim();
+    const applicantEmail = document.getElementById('applicantEmail').value.trim();
+    const applicantPhone = document.getElementById('applicantPhone').value.trim();
+    const applicantDOB = document.getElementById('applicantDOB').value;
+    const provinceResidency = document.getElementById('provinceResidency').value;
+    const beneficiaries = document.querySelectorAll('input[name="beneficiary"]:checked').length > 0;
+    const affordability = document.getElementById('affordability').value;
+    const tobacco = document.getElementById('tobaccoSelect').value;
+    const bornCanada = document.querySelector('input[name="bornCanada"]:checked');
+    const familyDoctor = document.querySelector('input[name="familyDoctor"]:checked');
+    const agreed = document.getElementById('consentAgreed').checked;
+    const confirmed = document.getElementById('consentConfirmed').checked;
+
+    if (!applicantName || !applicantEmail || !applicantPhone || !applicantDOB || !provinceResidency || !beneficiaries || !affordability || !tobacco || !bornCanada || !familyDoctor || !agreed || !confirmed) {
+      showValidation('s4Validation');
+      return;
+    }
+    hideValidation('s4Validation');
+
+    const data = collectFormData();
+    const submitBtn = document.querySelector('.btn-submit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+
+    try {
+      const resp = await fetch('/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await resp.json();
+
+      if (result.success) {
+        document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('successScreen').style.display = 'block';
+        document.getElementById('stepIndicator').style.display = 'none';
+      } else {
+        alert('There was an error submitting the form. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit';
+      }
+    } catch (err) {
+      alert('There was an error submitting the form. Please try again.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit';
+    }
+  }
+</script>
+
+</body>
+</html>
