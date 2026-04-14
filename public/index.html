@@ -29,7 +29,7 @@
   .header {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 30px 30px 20px;
+    padding: 35px 30px 30px;
     text-align: center;
   }
   .header h1 {
@@ -37,12 +37,14 @@
     font-size: 2.4rem;
     font-weight: 700;
     letter-spacing: 0.3px;
-    margin-bottom: 4px;
+    margin-bottom: -2px;
+    line-height: 1.2;
   }
   .header-subtitle {
     color: #4a6274;
     font-size: 1.8rem;
     font-weight: 500;
+    line-height: 1.2;
   }
 
   /* Step indicator — white rounded card overlapping the grey area */
@@ -465,7 +467,7 @@
 <div class="top-bar">
   <div class="header">
     <h1>Access Life</h1>
-    <h2 class="header-subtitle">Benefit Amount</h2>
+    <h2 class="header-subtitle">Determination of Benefit Amount</h2>
   </div>
 </div>
 
@@ -1103,7 +1105,7 @@
   <!-- Tobacco -->
   <div class="question-group">
     <p class="question-text"><strong>2.</strong> When was the last time you used tobacco in any form (including cigarettes, cigars, cigarillos, marijuana/cannabis mixed with tobacco, electronic cigarettes, gum, patches, chewing tobacco or snuff, betel nuts, shisha, hookah / water pipe, etc.)?</p>
-    <select name="tobacco" id="tobaccoSelect" class="dropdown-select">
+    <select name="tobacco" id="tobaccoSelect" class="dropdown-select" onchange="toggleTobaccoTypes()">
       <option value="">Select:</option>
       <option value="Never">Never</option>
       <option value="In the past year">In the past year</option>
@@ -1111,6 +1113,23 @@
       <option value="Between 3 and 5 years ago">Between 3 and 5 years ago</option>
       <option value="More than 5 years ago">More than 5 years ago</option>
     </select>
+
+    <div class="conditional-field" id="tobaccoTypesField">
+      <label style="margin-bottom: 10px;">Which type(s) of tobacco did you use? (Select all that apply)</label>
+      <div class="checkbox-list">
+        <label class="checkbox-option"><input type="checkbox" name="tobaccoType" value="Cigarettes"> Cigarettes</label>
+        <label class="checkbox-option"><input type="checkbox" name="tobaccoType" value="Cigars"> Cigars</label>
+        <label class="checkbox-option"><input type="checkbox" name="tobaccoType" value="Cigarillos"> Cigarillos</label>
+        <label class="checkbox-option"><input type="checkbox" name="tobaccoType" value="Marijuana/cannabis mixed with tobacco"> Marijuana/cannabis mixed with tobacco</label>
+        <label class="checkbox-option"><input type="checkbox" name="tobaccoType" value="Electronic cigarettes"> Electronic cigarettes</label>
+        <label class="checkbox-option"><input type="checkbox" name="tobaccoType" value="Gum"> Gum</label>
+        <label class="checkbox-option"><input type="checkbox" name="tobaccoType" value="Patches"> Patches</label>
+        <label class="checkbox-option"><input type="checkbox" name="tobaccoType" value="Chewing tobacco or snuff"> Chewing tobacco or snuff</label>
+        <label class="checkbox-option"><input type="checkbox" name="tobaccoType" value="Betel nuts"> Betel nuts</label>
+        <label class="checkbox-option"><input type="checkbox" name="tobaccoType" value="Shisha"> Shisha</label>
+        <label class="checkbox-option"><input type="checkbox" name="tobaccoType" value="Hookah / water pipe"> Hookah / water pipe</label>
+      </div>
+    </div>
   </div>
 
   <!-- Born in Canada -->
@@ -1226,7 +1245,7 @@
   <div class="success-screen">
     <div class="checkmark">&#10003;</div>
     <h2>Thank You!</h2>
-    <p>Your form has been submitted successfully.</p>
+    <p>Your Health Questionnaire has been submitted successfully.</p>
   </div>
 </div>
 
@@ -1349,6 +1368,14 @@
   }
 
   // ---- Conditional toggles (final section) ----
+  function toggleTobaccoTypes() {
+    const val = document.getElementById('tobaccoSelect').value;
+    document.getElementById('tobaccoTypesField').classList.toggle('show', val === 'In the past year');
+    if (val !== 'In the past year') {
+      document.querySelectorAll('input[name="tobaccoType"]').forEach(cb => cb.checked = false);
+    }
+  }
+
   function toggleBornCanada() {
     const val = document.querySelector('input[name="bornCanada"]:checked')?.value;
     document.getElementById('notBornCanadaFields').classList.toggle('show', val === 'No');
@@ -1446,6 +1473,10 @@
     data.finalSection['Benefit amount recipients'] = beneficiaries.length > 0 ? beneficiaries.join(', ') : 'Not answered';
     data.finalSection['Affordability guideline'] = document.getElementById('affordability').value || 'Not answered';
     data.finalSection['Tobacco use'] = document.getElementById('tobaccoSelect').value || 'Not answered';
+    const tobaccoTypes = [...document.querySelectorAll('input[name="tobaccoType"]:checked')].map(cb => cb.value);
+    if (tobaccoTypes.length > 0) {
+      data.finalSection['Tobacco type(s)'] = tobaccoTypes.join(', ');
+    }
 
     const bornCanada = document.querySelector('input[name="bornCanada"]:checked');
     data.finalSection['Born in Canada'] = bornCanada ? bornCanada.value : 'Not answered';
