@@ -316,7 +316,7 @@
         <div class="submission-card ${s.viewed ? '' : 'unread'}" id="card-${s.id}">
           <div class="card-header" onclick="toggleCard(${s.id})">
             <div class="card-meta">
-              <span class="card-id">Submission #${s.id}</span>
+              <span class="card-id">${escapeHTML(data.applicantName || data.finalSection?.['Full name'] || 'No Name')}</span>
               <span class="card-date">${formatDate(s.submitted_at)}</span>
             </div>
             <div class="card-actions">
@@ -395,7 +395,8 @@
   }
 
   function formatDate(dateStr) {
-    const d = new Date(dateStr + 'Z');
+    const d = new Date(dateStr);
+    if (isNaN(d)) return dateStr || 'Unknown date';
     return d.toLocaleString('en-CA', { timeZone: 'America/Toronto', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
 
