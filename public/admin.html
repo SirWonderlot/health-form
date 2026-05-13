@@ -155,6 +155,16 @@
     transition: color 0.2s;
   }
   .btn-delete:hover { color: #e74c3c; }
+  .btn-pdf {
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .btn-pdf:hover { color: #4a6274; }
   .unread-dot {
     width: 10px; height: 10px;
     background: #e74c3c;
@@ -310,8 +320,14 @@
       return;
     }
 
+    // Remember which cards are currently open so the refresh doesn't collapse them
+    const openIds = new Set(
+      [...document.querySelectorAll('.card-body.open')].map(el => parseInt(el.id.replace('body-', '')))
+    );
+
     list.innerHTML = submissions.map(s => {
       const data = typeof s.data === 'string' ? JSON.parse(s.data) : s.data;
+      const isOpen = openIds.has(s.id);
       return `
         <div class="submission-card ${s.viewed ? '' : 'unread'}" id="card-${s.id}">
           <div class="card-header" onclick="toggleCard(${s.id})">
@@ -322,10 +338,11 @@
             <div class="card-actions">
               <span class="card-route">${escapeHTML(s.route_taken || 'N/A')}</span>
               ${s.viewed ? '' : '<div class="unread-dot"></div>'}
+              <button class="btn-pdf" onclick="event.stopPropagation();printSubmission(${s.id})" title="Print / Save as PDF">&#128190;</button>
               <button class="btn-delete" onclick="event.stopPropagation();deleteSubmission(${s.id})" title="Delete">&times;</button>
             </div>
           </div>
-          <div class="card-body" id="body-${s.id}">
+          <div class="card-body ${isOpen ? 'open' : ''}" id="body-${s.id}">
             ${renderSubmissionData(data)}
           </div>
         </div>`;
@@ -392,6 +409,68 @@
     if (!confirm('Delete this submission?')) return;
     fetch(`/admin/api/submissions/${id}`, { method: 'DELETE' })
       .then(() => loadSubmissions());
+  }
+
+  function printSubmission(id) {
+    const sub = submissions.find(s => s.id === id);
+    if (!sub) return;
+    const data = typeof sub.data === 'string' ? JSON.parse(sub.data) : sub.data;
+    const name = data.applicantName || data.finalSection?.['Full name'] || 'No Name';
+    const date = formatDate(sub.submitted_at);
+
+    const win = window.open('', '_blank');
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Submission — ${escapeHTML(name)}</title>
+        <style>
+          body { font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; color: #333; padding: 30px; max-width: 800px; margin: 0 auto; line-height: 1.5; }
+          h1 { color: #4a6274; font-size: 1.6rem; margin-bottom: 4px; }
+          .meta { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+          .route { background: #f0f4f8; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; display: inline-block; margin-bottom: 20px; }
+          h2 { color: #4a6274; font-size: 1.05rem; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-top: 22px; margin-bottom: 10px; }
+          .row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.9rem; border-bottom: 1px solid #f4f4f4; gap: 16px; }
+          .q { color: #555; flex: 1; }
+          .a { font-weight: 600; flex-shrink: 0; }
+          .a.yes { color: #c0392b; }
+          .a.no { color: #27ae60; }
+          @media print { body { padding: 0; } }
+        </style>
+      </head>
+      <body>
+        <h1>Access Life — Determination of Benefit Amount</h1>
+        <div class="meta"><strong>${escapeHTML(name)}</strong> — Submitted ${escapeHTML(date)}</div>
+        <div class="route">Route: ${escapeHTML(sub.route_taken || 'N/A')}</div>
+        ${buildPrintSections(data)}
+        <script>window.onload = () => window.print();<\/script>
+      </body>
+      </html>
+    `);
+    win.document.close();
+  }
+
+  function buildPrintSections(data) {
+    const sectionLabels = {
+      section1: 'Section 1',
+      section2: 'Section 2',
+      section3: 'Section 3',
+      finalSection: 'Final Section'
+    };
+    let html = '';
+    for (const [key, label] of Object.entries(sectionLabels)) {
+      if (data[key] && Object.keys(data[key]).length > 0) {
+        html += `<h2>${label}</h2>`;
+        for (const [q, a] of Object.entries(data[key])) {
+          const ansStr = String(a);
+          let cls = '';
+          if (ansStr === 'Yes') cls = 'yes';
+          else if (ansStr === 'No') cls = 'no';
+          html += `<div class="row"><span class="q">${escapeHTML(q)}</span><span class="a ${cls}">${escapeHTML(ansStr)}</span></div>`;
+        }
+      }
+    }
+    return html;
   }
 
   function formatDate(dateStr) {
