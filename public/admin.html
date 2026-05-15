@@ -259,6 +259,100 @@
   let submissions = [];
   let refreshTimer = null;
 
+  // Explicit display order for each section — Postgres JSONB doesn't preserve insertion order
+  const sectionOrder = {
+    section1: [
+      'Gender',
+      '1. MAID discussion',
+      '2a. AIDS/HIV',
+      '2b. Heart failure/cardiomyopathy',
+      "2c. Cystic fibrosis/Alzheimer's/dementia/Huntington's/Parkinson's/ALS/muscular dystrophy/ataxia",
+      '2d. Chronic respiratory disease requiring oxygen/ventilator',
+      '2e. Organ/bone marrow transplant',
+      '2f. Heart conditions before age 40',
+      '3a. Amputation from disease (5yr)',
+      '3b. Drug/alcohol treatment (5yr)',
+      '3c. Criminal offense (5yr)',
+      '3d. Record suspension/pardon (5yr)',
+      '4a. Cancer/leukemia/lymphoma (3yr)',
+      '4b. Antineoplastic prescription (3yr)',
+      '4c. Hard drugs/methadone/Narcan/Suboxone (3yr)',
+      '5a. Hospitalized/nursing facility',
+      '5b. Bedridden/wheelchair',
+      '5c. Awaiting surgery',
+      '5d. Awaiting test/procedure',
+      '5e. Abnormal test requiring further evaluation',
+      '5f. Waiting for specialist appointment',
+      '5g. Unexplained signs/symptoms',
+      '6. Weight exceeds table (Section 1)'
+    ],
+    section2: [
+      '1a. Insurance application declined/postponed (2yr)',
+      '2a. Chronic kidney disease (5yr)',
+      '2b. Chronic liver disease (5yr)',
+      '3a-I. Cardiac — anticoagulants/antiplatelets (3yr)',
+      '3a-II. Cardiac — surgery (3yr)',
+      '3b-I. Cerebrovascular — anticoagulants/antiplatelets (3yr)',
+      '3b-II. Cerebrovascular — surgery (3yr)',
+      '4a. Aneurysm surgery (12mo)',
+      '4b-I. Mental health — hospitalized (12mo)',
+      '4b-II. Mental health — medication changed (12mo)',
+      "4b-III. Mental health — didn't follow treatment (12mo)",
+      '4c-I. Diabetes — medication changed (12mo)',
+      "4c-II. Diabetes — didn't follow treatment (12mo)",
+      '4d-I. Cholesterol/BP — medication changed (12mo)',
+      "4d-II. Cholesterol/BP — didn't follow treatment (12mo)",
+      '5a. Travel to high-risk regions (next 2yr)',
+      '5b. Reside outside Canada/USA 6+ months (next 2yr)'
+    ],
+    section3: [
+      '1. Weight exceeds table (Section 3)',
+      '2a. Cancer/leukemia/lymphoma (5yr)',
+      '2b. Antineoplastic prescription (5yr)',
+      '3. Weight decreased 10%+ (12mo)',
+      "4a. Family history — Huntington's/PKD before 60"
+    ],
+    finalSection: [
+      'Full name',
+      'Email address',
+      'Phone number',
+      'Date of birth',
+      'Province of residency',
+      'Benefit amount recipients',
+      'Affordability guideline',
+      'Tobacco use',
+      'Tobacco type(s)',
+      'Born in Canada',
+      'Country of birth',
+      'Arrival date in Canada',
+      'Legal status',
+      'Has family doctor',
+      'Doctor full name',
+      'Doctor province',
+      'Doctor city',
+      'Last consultation date',
+      'Privacy consent agreed',
+      'Good faith declaration confirmed'
+    ]
+  };
+
+  function orderedEntries(sectionKey, sectionData) {
+    const order = sectionOrder[sectionKey] || [];
+    const result = [];
+    const seen = new Set();
+    for (const key of order) {
+      if (key in sectionData) {
+        result.push([key, sectionData[key]]);
+        seen.add(key);
+      }
+    }
+    // Append any unexpected keys at the end so nothing gets dropped
+    for (const [k, v] of Object.entries(sectionData)) {
+      if (!seen.has(k)) result.push([k, v]);
+    }
+    return result;
+  }
+
   function doLogin() {
     const password = document.getElementById('passwordInput').value;
     fetch('/admin/api/login', {
@@ -361,7 +455,7 @@
     for (const [key, label] of Object.entries(sectionLabels)) {
       if (data[key] && Object.keys(data[key]).length > 0) {
         html += `<div class="section-title">${label}</div>`;
-        for (const [q, a] of Object.entries(data[key])) {
+        for (const [q, a] of orderedEntries(key, data[key])) {
           const ansStr = String(a);
           let cls = 'other';
           if (ansStr === 'Yes') cls = 'yes';
@@ -461,7 +555,7 @@
     for (const [key, label] of Object.entries(sectionLabels)) {
       if (data[key] && Object.keys(data[key]).length > 0) {
         html += `<h2>${label}</h2>`;
-        for (const [q, a] of Object.entries(data[key])) {
+        for (const [q, a] of orderedEntries(key, data[key])) {
           const ansStr = String(a);
           let cls = '';
           if (ansStr === 'Yes') cls = 'yes';
